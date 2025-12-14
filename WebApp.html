@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Timer & Stopwatch</title>
+  <style>
+    *{
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body{
+      background: #f1f3f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .app{
+      background: #fff;
+      width: 360px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    h2{
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .time{
+      font-size: 36px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .buttons{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    button{
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .start{ background: #28a745; color: #fff; }
+    .stop{ background: #dc3545; color: #fff; }
+    .reset{ background: #6c757d; color: #fff; }
+    .switch{
+      margin-bottom: 15px;
+    }
+    .switch button{
+      background: #2874f0;
+      color: #fff;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <div class="switch">
+    <button onclick="showStopwatch()">Stopwatch</button>
+    <button onclick="showTimer()">Timer</button>
+  </div>
+
+  <h2 id="title">Stopwatch</h2>
+  <div class="time" id="display">00:00:00</div>
+
+  <div class="buttons">
+    <button class="start" onclick="start()">Start</button>
+    <button class="stop" onclick="stop()">Stop</button>
+    <button class="reset" onclick="reset()">Reset</button>
+  </div>
+</div>
+
+<script>
+  let seconds = 0;
+  let minutes = 0;
+  let hours = 0;
+  let interval = null;
+  let mode = 'stopwatch';
+
+  function updateDisplay(){
+    document.getElementById("display").innerText =
+      String(hours).padStart(2,'0') + ':' +
+      String(minutes).padStart(2,'0') + ':' +
+      String(seconds).padStart(2,'0');
+  }
+
+  function start(){
+    if(interval) return;
+    interval = setInterval(() => {
+      if(mode === 'stopwatch'){
+        seconds++;
+      } else {
+        seconds--;
+        if(seconds < 0){ seconds = 59; minutes--; }
+        if(minutes < 0){ minutes = 59; hours--; }
+        if(hours <= 0 && minutes <= 0 && seconds <= 0){
+          stop();
+          alert('Time Up!');
+        }
+      }
+
+      if(seconds >= 60){ seconds = 0; minutes++; }
+      if(minutes >= 60){ minutes = 0; hours++; }
+      updateDisplay();
+    }, 1000);
+  }
+
+  function stop(){
+    clearInterval(interval);
+    interval = null;
+  }
+
+  function reset(){
+    stop();
+    seconds = minutes = hours = 0;
+    updateDisplay();
+  }
+
+  function showStopwatch(){
+    reset();
+    mode = 'stopwatch';
+    document.getElementById('title').innerText = 'Stopwatch';
+  }
+
+  function showTimer(){
+    reset();
+    mode = 'timer';
+    hours = 0;
+    minutes = 1; // default 1 minute timer
+    seconds = 0;
+    updateDisplay();
+    document.getElementById('title').innerText = 'Timer';
+  }
+</script>
+
+</body>
+</html>
